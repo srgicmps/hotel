@@ -1,30 +1,113 @@
-<?php $root = $_SERVER['DOCUMENT_ROOT']; ?>
+<?php
+$root = $_SERVER['DOCUMENT_ROOT'];
+include($root . '/student062/dwes/includes/header.php');
+?>
 
-<?php include($root . '/student062/dwes/src/header.php'); ?>
+<!-- admin123 -->
+ <!-- password123 -->
+<section class="hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="hero-title">Experience Luxury & Comfort</h1>
+                <p class="hero-subtitle">Your perfect getaway begins here</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="search-box">
+                    <form action="search-rooms.php" method="post" class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Check In</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <input type="text" class="form-control datepicker" name="check_in" placeholder="Select date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Check Out</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <input type="text" class="form-control datepicker" name="check_out" placeholder="Select date" required>
+                            </div>
+                        </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Guests</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <select class="form-control" name="guests" required>
+                                        <option value="1">1 Guest</option>
+                                        <option value="2" selected>2 Guests</option>
+                                        <option value="3">3 Guests</option>
+                                        <option value="4">4 Guests</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search"></i> Check Availability
+                                </button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-down">
+        <i class="fas fa-chevron-down fa-2x"></i>
+    </div>
+</section>
 
-<div id="background-container" class="d-flex justify-content-center align-items-center flex-column container-fluid" style="height: 80vh;">
-	<div class="bg-light border shadow p-5 d-flex flex-column justify-content-center align-items-center mb-5">
-		<h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: normal; ">Encuentra tu próxima estancia</h1>
-		<h4 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: normal;">Busca las mejores ofertas y habitaciones directamente desde nuestra web...</h4>
-	</div>
-	<form action="<?php $root; ?>/student062/dwes/db/db_room_category_search.php" method="post" class="bg-light border shadow p-5 d-flex justify-content-center align-items-center">
-		<div class="d-flex flex-column mx-4">
-			<label class="text-nowrap mb-3 text-uppercase" for="check_in_date">Arrival Date</label>
-			<input type="date" class="bg-transparent border border-transparent" id="check_in_date" name="check_in_date" value="<?php echo date('Y-m-d'); ?>" name="arrival" required>
-		</div>
-		<div class="d-flex flex-column mx-4">
-			<label class="text-nowrap mb-3 text-uppercase" for="check_out_date">Departure Date</label>
-			<input type="date" class="bg-transparent border border-transparent" id="check_out_date" name="check_out_date" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" name="departure" required>
-		</div>
-		<div class="d-flex flex-column mx-4">
-			<label class="text-nowrap mb-3 text-uppercase" for="number_of_guests">Number of People</label>
-			<input type="number" class="bg-transparent border border-transparent" value="2" id="number_of_guests" name="number_of_guests" min="1" max="4" required>
-		</div>
-		<button type="submit" class="border-0 p-2 px-4 text-white mx-4" style="background-color: #7f7f7f; font-weight: bold; font-family: Arial, sans-serif; font-size: 12px; letter-spacing: 2.5px;">CHECK AVAILABILITY</button>
-	</form>
+<script>
+     document.addEventListener('DOMContentLoaded', function() {
+        const checkInPicker = flatpickr("input[name='check_in']", {
+            enableTime: false,
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "F j, Y",
+            onChange: function(selectedDates, dateStr) {
+                if (selectedDates[0]) {
+                    const nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    checkOutPicker.set('minDate', nextDay);
+                    
+                    if (checkOutPicker.selectedDates[0] && checkOutPicker.selectedDates[0] <= selectedDates[0]) {
+                        checkOutPicker.setDate(nextDay);
+                    }
+                }
+            }
+        });
 
+        const checkOutPicker = flatpickr("input[name='check_out']", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "F j, Y",
+            minDate: new Date().fp_incr(1)
+        });
 
-</div>
+        if (checkInPicker.selectedDates[0]) {
+            const nextDay = new Date(checkInPicker.selectedDates[0]);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOutPicker.set('minDate', nextDay);
+        }
 
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').classList.add('scrolled');
+            } else {
+                document.querySelector('.navbar').classList.remove('scrolled');
+            }
+        });
 
-<?php include($root . '/student062/dwes/src/footer.php'); ?>
+        document.querySelector('.scroll-down').addEventListener('click', function() {
+            window.scrollTo({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+
+<?php include($root . '/student062/dwes/includes/footer.php'); ?>
